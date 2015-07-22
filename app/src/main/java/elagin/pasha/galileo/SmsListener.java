@@ -3,7 +3,6 @@ package elagin.pasha.galileo;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
 
@@ -11,11 +10,12 @@ import elagin.pasha.galileo.activity.MainActivity;
 
 public class SmsListener extends BroadcastReceiver {
 
-    private final static String BLOCK_PHONE = "+79170000000";
+    private MyApp myApp = null;
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
+        myApp = (MyApp) context.getApplicationContext();
         if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")) {
             Bundle bundle = intent.getExtras();
             SmsMessage[] msgs = null;
@@ -27,7 +27,7 @@ public class SmsListener extends BroadcastReceiver {
                     for (int i = 0; i < msgs.length; i++) {
                         msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
                         msg_from = msgs[i].getOriginatingAddress();
-                        if(msg_from.equals(BLOCK_PHONE)) {
+                        if (msg_from.equals(myApp.preferences().getPrefBlockPhone())) {
                             String msgBody = msgs[i].getMessageBody();
                             Intent mainIntent = new Intent();
                             mainIntent.setClassName(context.getPackageName(), MainActivity.class.getName());

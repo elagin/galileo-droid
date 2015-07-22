@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import elagin.pasha.galileo.MyApp;
 import elagin.pasha.galileo.R;
 import elagin.pasha.galileo.seven_gis.Commands;
 import elagin.pasha.galileo.seven_gis.Status;
@@ -29,15 +31,17 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private Button resetBtn;
     private TextView answerBody;
     private TextView dateView;
-
-    private final static String BLOCK_PHONE = "+79170000000";
+    private EditText blockPhone;
 
     private Geocoder geocoder;
+    private MyApp myApp = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        myApp = (MyApp) getApplicationContext();
 
         sendSmsBtn = (Button) findViewById(R.id.getStatusBtn);
         sendSmsBtn.setOnClickListener(this);
@@ -47,6 +51,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         answerBody = (TextView) findViewById(R.id.answerBody);
         dateView = (TextView) findViewById(R.id.date);
+
+        blockPhone = (EditText) findViewById(R.id.blockPhone);
+        blockPhone.setText(myApp.preferences().getPrefBlockPhone());
     }
 
     private Map<String, String> getMap(String s) {
@@ -87,7 +94,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public void sendSMS(String msg) {
         try {
             SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage(BLOCK_PHONE, null, msg, null, null);
+            String ph = myApp.preferences().getPrefBlockPhone();
+            smsManager.sendTextMessage(myApp.preferences().getPrefBlockPhone(), null, msg, null, null);
             Toast.makeText(getApplicationContext(), "Message Sent",
                     Toast.LENGTH_LONG).show();
         } catch (Exception ex) {
@@ -112,6 +120,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         switch (id) {
             case R.id.getStatusBtn:
+                myApp.preferences().setPrefBlockPhone(blockPhone.getText().toString());
                 sendStatus();
                 break;
             case R.id.resetBtn:
