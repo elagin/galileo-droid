@@ -3,6 +3,7 @@ package elagin.pasha.galileo.activity;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.telephony.SmsManager;
 import android.util.Log;
@@ -20,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import elagin.pasha.galileo.AnswerMessage;
 import elagin.pasha.galileo.MyApp;
 import elagin.pasha.galileo.R;
 import elagin.pasha.galileo.seven_gis.Commands;
@@ -145,8 +147,20 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     if (status.parceStatus(body)) {
                         answerBody.setText(getAddres(status.getLat(), status.getLon()));
                         dateView.setText(status.getTime());
+                        myApp.Messages().add(new AnswerMessage(smsBoby));
+                        update();
                     }
                 }
+            }
+        }
+    }
+
+    private void update() {
+        List<Fragment> allFragments = getSupportFragmentManager().getFragments();
+        if (allFragments != null) {
+            for (Fragment fragment : allFragments) {
+                MainActivityFragment f1 = (MainActivityFragment) fragment;
+                f1.update();
             }
         }
     }
