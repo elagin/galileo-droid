@@ -10,12 +10,10 @@ import elagin.pasha.galileo.activity.MainActivity;
 
 public class SmsListener extends BroadcastReceiver {
 
-    private MyApp myApp = null;
-
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        myApp = (MyApp) context.getApplicationContext();
+        MyApp myApp = (MyApp) context.getApplicationContext();
         if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")) {
             Bundle bundle = intent.getExtras();
             SmsMessage[] msgs = null;

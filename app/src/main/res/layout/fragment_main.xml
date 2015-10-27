@@ -15,23 +15,30 @@
         android:layout_height="wrap_content"
         android:id="@+id/blockPhone" />
 
-    <Button
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <Button
             android:id="@+id/getStatusBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/textView"
-            android:text="Статус"/>
+            android:text="Статус" />
 
-    <Button
+        <Button
             android:id="@+id/resetBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/textView"
-            android:text="Сброс"/>
+            android:text="Сброс" />
+
+        <Button
+            android:id="@+id/insysBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="insys" />
+
+    </LinearLayout>
 
     <TextView
             android:id="@+id/date"
@@ -44,7 +51,8 @@
             android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:lines="2"
-        android:maxLines="3" />
+        android:maxLines="3"
+        android:background="#cdcdcd" />
 
     <ScrollView
         android:id="@+id/messages_scroll"

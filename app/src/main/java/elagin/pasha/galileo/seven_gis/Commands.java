@@ -9,4 +9,8 @@ public class Commands {
     public static String status() {
         return "status";
     }
+
+    public static String insys() {
+        return "insys";
+    }
 }

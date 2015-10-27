@@ -25,12 +25,11 @@ import elagin.pasha.galileo.AnswerMessage;
 import elagin.pasha.galileo.MyApp;
 import elagin.pasha.galileo.R;
 import elagin.pasha.galileo.seven_gis.Commands;
+import elagin.pasha.galileo.seven_gis.Insys;
 import elagin.pasha.galileo.seven_gis.Status;
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
 
-    private Button sendSmsBtn;
-    private Button resetBtn;
     private TextView answerBody;
     private TextView dateView;
     private EditText blockPhone;
@@ -45,11 +44,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         myApp = (MyApp) getApplicationContext();
 
-        sendSmsBtn = (Button) findViewById(R.id.getStatusBtn);
+        Button sendSmsBtn = (Button) findViewById(R.id.getStatusBtn);
         sendSmsBtn.setOnClickListener(this);
 
-        resetBtn = (Button) findViewById(R.id.resetBtn);
-        sendSmsBtn.setOnClickListener(this);
+        Button resetBtn = (Button) findViewById(R.id.resetBtn);
+        resetBtn.setOnClickListener(this);
+
+        Button insysBtn = (Button) findViewById(R.id.insysBtn);
+        insysBtn.setOnClickListener(this);
 
         answerBody = (TextView) findViewById(R.id.answerBody);
         dateView = (TextView) findViewById(R.id.date);
@@ -60,7 +62,15 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     private Map<String, String> getMap(String s) {
         Map<String, String> myMap = new HashMap<>();
-        String[] pairs = s.split(" ");
+        String coma = " ";
+        final String insys = "INSYS:";
+
+        if (s.contains(insys)) {
+            s = s.replace(insys, "").replace(";", "");
+            coma = ",";
+        }
+
+        String[] pairs = s.split(coma);
         for (int i = 0; i < pairs.length; i++) {
             String pair = pairs[i];
             String[] keyValue = pair.split("=");
@@ -96,25 +106,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public void sendSMS(String msg) {
         try {
             SmsManager smsManager = SmsManager.getDefault();
-            String ph = myApp.preferences().getPrefBlockPhone();
             smsManager.sendTextMessage(myApp.preferences().getPrefBlockPhone(), null, msg, null, null);
-            Toast.makeText(getApplicationContext(), "Message Sent",
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Message Sent", Toast.LENGTH_LONG).show();
         } catch (Exception ex) {
-            Toast.makeText(getApplicationContext(), ex.getMessage().toString(),
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), ex.getMessage().toString(), Toast.LENGTH_LONG).show();
             ex.printStackTrace();
         }
     }
-
-    private void sendReset() {
-        sendSMS(Commands.reset());
-    }
-
-    private void sendStatus() {
-        sendSMS(Commands.status());
-    }
-
 
     @Override
     public void onClick(View v) {
@@ -123,10 +121,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         switch (id) {
             case R.id.getStatusBtn:
                 myApp.preferences().setPrefBlockPhone(blockPhone.getText().toString());
-                sendStatus();
+                sendSMS(Commands.status());
                 break;
             case R.id.resetBtn:
-                sendReset();
+                sendSMS(Commands.reset());
+                break;
+            case R.id.insysBtn:
+                sendSMS(Commands.insys());
+                break;
             default:
                 Log.e("Startup", "Unknown button pressed");
                 break;
@@ -142,11 +144,17 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             String smsBoby = bindle.getString("sms");
             if (smsBoby != null) {
                 Map<String, String> body = getMap(smsBoby);
-                if (body.containsKey("Lat")) {
+                if (smsBoby.contains("Dev")) {
                     Status status = new Status();
                     if (status.parceStatus(body)) {
                         answerBody.setText(getAddres(status.getLat(), status.getLon()));
                         dateView.setText(status.getTime());
+                        myApp.Messages().add(new AnswerMessage(smsBoby));
+                        update();
+                    }
+                } else if (smsBoby.contains("INSYS")) {
+                    Insys insys = new Insys();
+                    if (insys.parce(body)) {
                         myApp.Messages().add(new AnswerMessage(smsBoby));
                         update();
                     }
@@ -201,6 +209,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         } catch (IOException e) {
             e.printStackTrace();
+            Toast.makeText(getApplicationContext(), e.getMessage().toString(), Toast.LENGTH_LONG).show();
         }
         return res.toString();
     }
