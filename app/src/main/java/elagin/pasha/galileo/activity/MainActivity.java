@@ -2,10 +2,6 @@ package elagin.pasha.galileo.activity;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,16 +16,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import elagin.pasha.galileo.AnswerMessage;
 import elagin.pasha.galileo.MyApp;
-import elagin.pasha.galileo.MyLocationManager;
 import elagin.pasha.galileo.R;
+import elagin.pasha.galileo.seven_gis.Answer;
 import elagin.pasha.galileo.seven_gis.Commands;
 import elagin.pasha.galileo.seven_gis.Insys;
 import elagin.pasha.galileo.seven_gis.Status;
@@ -40,7 +33,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private TextView dateView;
     private EditText blockPhone;
 
-    private Geocoder geocoder;
     private MyApp myApp = null;
 
     @Override
@@ -143,37 +135,29 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
     }
 
+    protected void parceSms(String smsBoby) {
+        Answer answer = null;
+        if (smsBoby.contains("Dev")) {
+            answer = new Status(this, smsBoby);
+        } else if (smsBoby.contains("INSYS")) {
+            answer = new Insys(this, smsBoby);
+        }
+        if (answer != null) {
+            myApp.getAnswers().add(answer);
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
 
-        MyLocationManager.wakeup();
+        myApp.getLocationManager().wakeup();
 
         Bundle bindle = getIntent().getExtras();
         if (bindle != null) {
             String smsBoby = bindle.getString("sms");
             if (smsBoby != null) {
-                Map<String, String> body = getMap(smsBoby);
-                if (smsBoby.contains("Dev")) {
-                    Status status = new Status();
-                    if (status.parceStatus(body)) {
-                        Location userLocation = MyLocationManager.getLocation();
-                        Location blockLocation = new Location(LocationManager.GPS_PROVIDER);
-                        blockLocation.setLatitude(status.getLat());
-                        blockLocation.setLongitude(status.getLon());
-                        float distance = userLocation.distanceTo(blockLocation);
-                        answerBody.setText("Расстояние: " + distance + ". Адрес: " + getAddres(status.getLat(), status.getLon()));
-                        dateView.setText(status.getTime());
-                        myApp.Messages().add(new AnswerMessage(smsBoby));
-                        update();
-                    }
-                } else if (smsBoby.contains("INSYS")) {
-                    Insys insys = new Insys();
-                    if (insys.parce(body)) {
-                        myApp.Messages().add(new AnswerMessage(smsBoby));
-                        update();
-                    }
-                }
+                parceSms(smsBoby);
             }
         }
     }
@@ -186,47 +170,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 f1.update();
             }
         }
-    }
-
-    public String getAddres(Double lat, Double lon) {
-        if (geocoder == null) {
-            geocoder = new Geocoder(getApplicationContext());
-        }
-        StringBuilder res = new StringBuilder();
-        List<Address> list = new ArrayList<>();
-        try {
-            list = geocoder.getFromLocation(lat, lon, 1);
-            Address addr = list.get(0);
-
-            String locality = addr.getLocality();
-            if (locality == null)
-                locality = addr.getAdminArea();
-            if (locality == null && addr.getMaxAddressLineIndex() > 0)
-                locality = addr.getAddressLine(0);
-
-            String thoroughfare = addr.getThoroughfare();
-            if (thoroughfare == null)
-                thoroughfare = addr.getSubAdminArea();
-
-            String featureName = addr.getFeatureName();
-
-            if (locality != null)
-                res.append(locality);
-            if (thoroughfare != null) {
-                if (res.length() > 0)
-                    res.append(" ");
-                res.append(thoroughfare);
-            }
-            if (featureName != null)
-                if (res.length() > 0)
-                    res.append(" ");
-            res.append(featureName);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(getApplicationContext(), e.getMessage().toString(), Toast.LENGTH_LONG).show();
-        }
-        return res.toString();
     }
 
     private void readSms() {
@@ -250,7 +193,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     int int_Type = cur.getInt(index_Type);
                     Long now = System.currentTimeMillis();
                     if (((now - 86400000) < longDate)) { // one day old
-                        myApp.Messages().add(new AnswerMessage(longDate, strbody));
+                        parceSms(strbody);
                     }
                 } while (cur.moveToNext());
                 update();
@@ -267,7 +210,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     protected void onPause() {
         super.onPause();
-        MyLocationManager.sleep();
+        myApp.getLocationManager().sleep();
     }
 }
-

@@ -6,12 +6,14 @@ import android.content.Context;
 import java.util.ArrayList;
 import java.util.List;
 
+import elagin.pasha.galileo.seven_gis.Answer;
+
 public class MyApp extends Application {
 
     private MyPreferences prefs = null;
+    private MyLocationManager locationManager = null;
     private static MyApp instance;
-
-    private List<AnswerMessage> messages;
+    private List<Answer> answers;
 
     public MyApp() {
         instance = this;
@@ -27,9 +29,15 @@ public class MyApp extends Application {
         return prefs;
     }
 
-    public List<AnswerMessage> Messages() {
-        if (messages == null)
-            messages = new ArrayList<>();
-        return messages;
+    public MyLocationManager getLocationManager() {
+        if (locationManager == null)
+            locationManager = new MyLocationManager();
+        return locationManager;
+    }
+
+    public List<Answer> getAnswers() {
+        if (answers == null)
+            answers = new ArrayList<>();
+        return answers;
     }
 }

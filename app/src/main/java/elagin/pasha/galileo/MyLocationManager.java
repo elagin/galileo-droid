@@ -1,15 +1,21 @@
 package elagin.pasha.galileo;
 
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class MyLocationManager {
     /* constants */
@@ -29,10 +35,46 @@ public class MyLocationManager {
     private static Location current;
     private static GoogleApiClient googleApiClient;
     private static LocationRequest locationRequest;
-    private static final LocationListener locationListener;
-    private static final GoogleApiClient.ConnectionCallbacks connectionCallback;
+    private final LocationListener locationListener;
+    private final GoogleApiClient.ConnectionCallbacks connectionCallback;
+
+    private Geocoder geocoder;
 
     static {
+//        connectionCallback = new GoogleApiClient.ConnectionCallbacks() {
+//            @Override
+//            public void onConnected(Bundle connectionHint) {
+////TODO это очень плохо
+//                while (!googleApiClient.isConnected()) {
+//                    try {
+//                        Thread.sleep(5000);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//                LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, locationListener);
+//                LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, locationListener);
+//                current = getLocation();
+//            }
+//
+//            @Override
+//            public void onConnectionSuspended(int arg0) {
+//            }
+//        };
+//        locationListener = new com.google.android.gms.location.LocationListener() {
+//            @Override
+//            public void onLocationChanged(Location location) {
+//                current = location;
+//                // zz
+//                //Preferences.saveLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
+//                requestAddress();
+//            }
+//        };
+    }
+
+    public MyLocationManager() {
+        locationRequest = getProvider(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        current = getLocation();
         connectionCallback = new GoogleApiClient.ConnectionCallbacks() {
             @Override
             public void onConnected(Bundle connectionHint) {
@@ -64,12 +106,7 @@ public class MyLocationManager {
         };
     }
 
-    public MyLocationManager() {
-        locationRequest = getProvider(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        current = getLocation();
-    }
-
-    private static LocationRequest getProvider(int accuracy) {
+    private LocationRequest getProvider(int accuracy) {
         int interval, bestInterval, displacement;
         switch (accuracy) {
             case LocationRequest.PRIORITY_HIGH_ACCURACY:
@@ -91,12 +128,12 @@ public class MyLocationManager {
         return lr;
     }
 
-    public static Location getDirtyLocation() {
+    public Location getDirtyLocation() {
         if (current != null && current.getTime() - (new Date()).getTime() < 30000) return current;
         return getLocation();
     }
 
-    public static Location getLocation() {
+    public Location getLocation() {
         if (googleApiClient != null) {
             current = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
         }
@@ -111,7 +148,7 @@ public class MyLocationManager {
         return current;
     }
 
-    private static void runLocationService(int accuracy) {
+    private void runLocationService(int accuracy) {
         locationRequest = getProvider(accuracy);
         if (googleApiClient == null) {
             googleApiClient = new GoogleApiClient.Builder(MyApp.getAppContext()).addConnectionCallbacks(connectionCallback).addApi(LocationServices.API).build();
@@ -127,15 +164,15 @@ public class MyLocationManager {
         }
     }
 
-    public static void sleep() {
+    public void sleep() {
         runLocationService(LocationRequest.PRIORITY_LOW_POWER);
     }
 
-    public static void wakeup() {
+    public void wakeup() {
         runLocationService(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
-    private static void requestAddress() {
+    private void requestAddress() {
         Location location = getLocation();
         if (current == location) return;
         //address = getAddress(location);
@@ -177,4 +214,45 @@ public class MyLocationManager {
 //        }
 //        return res.toString();
 //    }
+
+    public String getAddres(Double lat, Double lon) {
+        if (geocoder == null) {
+            geocoder = new Geocoder(MyApp.getAppContext());
+        }
+        StringBuilder res = new StringBuilder();
+        List<Address> list = new ArrayList<>();
+        try {
+            list = geocoder.getFromLocation(lat, lon, 1);
+            Address addr = list.get(0);
+
+            String locality = addr.getLocality();
+            if (locality == null)
+                locality = addr.getAdminArea();
+            if (locality == null && addr.getMaxAddressLineIndex() > 0)
+                locality = addr.getAddressLine(0);
+
+            String thoroughfare = addr.getThoroughfare();
+            if (thoroughfare == null)
+                thoroughfare = addr.getSubAdminArea();
+
+            String featureName = addr.getFeatureName();
+
+            if (locality != null)
+                res.append(locality);
+            if (thoroughfare != null) {
+                if (res.length() > 0)
+                    res.append(" ");
+                res.append(thoroughfare);
+            }
+            if (featureName != null)
+                if (res.length() > 0)
+                    res.append(" ");
+            res.append(featureName);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(MyApp.getAppContext(), e.getMessage().toString(), Toast.LENGTH_LONG).show();
+        }
+        return res.toString();
+    }
 }

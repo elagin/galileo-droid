@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import elagin.pasha.galileo.MyApp;
 import elagin.pasha.galileo.R;
+import elagin.pasha.galileo.seven_gis.Answer;
 
 public class MainActivityFragment extends Fragment {
 
@@ -23,20 +24,19 @@ public class MainActivityFragment extends Fragment {
 
         View viewMain = inflater.inflate(R.layout.fragment_main, container, false);
         messagesTable = viewMain.findViewById(R.id.messages_table);
-
         myApp = (MyApp) getActivity().getApplicationContext();
-
         update();
-
         return viewMain;
     }
 
     public void update() {
         ViewGroup messageView = (ViewGroup) messagesTable;
         messageView.removeAllViews();
+        for (int i = 0; i < myApp.getAnswers().size(); i++) {
 
-        for (int i = 0; i < myApp.Messages().size(); i++) {
-            myApp.Messages().get(i).inflateRow(getActivity(), messageView);
+            Answer answer = myApp.getAnswers().get(i);
+            answer.inflateRow(getActivity(), messageView);
+//            myApp.getAnswers().get(i).inflateRow(getActivity(), messageView);
         }
     }
 }
