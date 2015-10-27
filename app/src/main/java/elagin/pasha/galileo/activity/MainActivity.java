@@ -165,7 +165,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                         answerBody.setText("Расстояние: " + distance + ". Адрес: " + getAddres(status.getLat(), status.getLon()));
                         dateView.setText(status.getTime());
                         myApp.Messages().add(new AnswerMessage(smsBoby));
-
                         update();
                     }
                 } else if (smsBoby.contains("INSYS")) {
@@ -231,15 +230,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     private void readSms() {
-        StringBuilder smsBuilder = new StringBuilder();
         final String SMS_URI_INBOX = "content://sms/inbox";
         final String SMS_URI_ALL = "content://sms/";
         try {
             Uri uri = Uri.parse(SMS_URI_INBOX);
             String[] projection = new String[]{"_id", "address", "person", "body", "date", "type"};
-            String address = myApp.preferences().getPrefBlockPhone();
-            //Cursor cur = getContentResolver().query(uri, projection, "address='123456789'", null, "date desc");
-            Cursor cur = getContentResolver().query(uri, projection, "address='+79175014317'", null, "date desc");
+            Cursor cur = getContentResolver().query(uri, projection, "address='" + myApp.preferences().getPrefBlockPhone() + "'", null, "date desc");
             if (cur.moveToFirst()) {
                 int index_Address = cur.getColumnIndex("address");
                 int index_Person = cur.getColumnIndex("person");
@@ -252,23 +248,17 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     String strbody = cur.getString(index_Body);
                     long longDate = cur.getLong(index_Date);
                     int int_Type = cur.getInt(index_Type);
-
-                    smsBuilder.append("[ ");
-                    smsBuilder.append(strAddress + ", ");
-                    smsBuilder.append(intPerson + ", ");
-                    smsBuilder.append(strbody + ", ");
-                    smsBuilder.append(longDate + ", ");
-                    smsBuilder.append(int_Type);
-                    smsBuilder.append(" ]\n\n");
+                    Long now = System.currentTimeMillis();
+                    if (((now - 86400000) < longDate)) { // one day old
+                        myApp.Messages().add(new AnswerMessage(longDate, strbody));
+                    }
                 } while (cur.moveToNext());
-
+                update();
                 if (!cur.isClosed()) {
                     cur.close();
                     cur = null;
                 }
-            } else {
-                smsBuilder.append("no result!");
-            } // end if
+            }
         } catch (SQLiteException ex) {
             Log.d("SQLiteException", ex.getMessage());
         }

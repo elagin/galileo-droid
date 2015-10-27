@@ -18,6 +18,11 @@ public class AnswerMessage {
         this.text = text;
     }
 
+    public AnswerMessage(Long sec, String text) {
+        this.date = new Date(sec);
+        this.text = text;
+    }
+
     public void inflateRow(final Context context, ViewGroup tableLayout) {
         LayoutInflater li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
