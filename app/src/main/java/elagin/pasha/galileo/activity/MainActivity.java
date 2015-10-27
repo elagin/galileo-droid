@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -135,12 +136,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
     }
 
-    protected void parceSms(String smsBoby) {
+    protected void parceSms(Date date, String smsBoby) {
         Answer answer = null;
         if (smsBoby.contains("Dev")) {
-            answer = new Status(this, smsBoby);
+            answer = new Status(this, date, smsBoby);
         } else if (smsBoby.contains("INSYS")) {
-            answer = new Insys(this, smsBoby);
+            answer = new Insys(this, date, smsBoby);
         }
         if (answer != null) {
             myApp.getAnswers().add(answer);
@@ -157,7 +158,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         if (bindle != null) {
             String smsBoby = bindle.getString("sms");
             if (smsBoby != null) {
-                parceSms(smsBoby);
+                parceSms(new Date(), smsBoby);
             }
         }
     }
@@ -193,7 +194,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     int int_Type = cur.getInt(index_Type);
                     Long now = System.currentTimeMillis();
                     if (((now - 86400000) < longDate)) { // one day old
-                        parceSms(strbody);
+                        parceSms(new Date(longDate), strbody);
                     }
                 } while (cur.moveToNext());
                 update();

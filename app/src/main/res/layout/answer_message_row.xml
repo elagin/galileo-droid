@@ -18,6 +18,7 @@
             android:id="@+id/text_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Dev34533" />
+            android:text="Dev34533"
+            android:layout_marginLeft="10dp" />
     </LinearLayout>
 </TableRow>

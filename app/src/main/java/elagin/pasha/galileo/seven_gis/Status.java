@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import java.util.Date;
 import java.util.Map;
 
 import elagin.pasha.galileo.MyApp;
@@ -20,12 +21,12 @@ public class Status extends Answer {
     private Location location;
     private Double lat;
     private Double lon;
-    private String time;
+    private String sendTime;
     private Integer dist;
     MyApp myApp;
 
-    public Status(Context context, String sms) {
-        super(context);
+    public Status(Context context, Date date, String sms) {
+        super(context, date);
         Map<String, String> map = super.getMap(sms);
         parce(map);
     }
@@ -39,7 +40,7 @@ public class Status extends Answer {
             if (lat != null && lon != null && time != null) {
                 this.lat = lat;
                 this.lon = lon;
-                this.time = time;
+                this.sendTime = time;
 
                 myApp = (MyApp) context.getApplicationContext();
                 Location userLocation = myApp.getLocationManager().getLocation();

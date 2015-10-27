@@ -32,9 +32,9 @@ public class Answer {
         return type;
     }
 
-    public Answer(Context context) {
+    public Answer(Context context, Date date) {
         this.context = context;
-        this.date = new Date();
+        this.date = date;
     }
 
     protected Map<String, String> getMap(String sms) {

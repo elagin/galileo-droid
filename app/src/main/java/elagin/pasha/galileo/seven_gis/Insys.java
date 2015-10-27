@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import java.util.Date;
 import java.util.Map;
 
 import elagin.pasha.galileo.MyUtils;
@@ -23,8 +24,8 @@ public class Insys extends Answer {
     private Double vdc;
     private Double temper;
 
-    public Insys(Context contex, String sms) {
-        super(contex);
+    public Insys(Context contex, Date date, String sms) {
+        super(contex, date);
         Map<String, String> map = super.getMap(sms);
         parce(map);
     }
@@ -54,7 +55,7 @@ public class Insys extends Answer {
         LayoutInflater li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         TableRow tr = (TableRow) li.inflate(R.layout.answer_message_row, tableLayout, false);
         ((TextView) tr.findViewById(R.id.date_message)).setText(MyUtils.getStringTime(date, false));
-        ((TextView) tr.findViewById(R.id.text_message)).setText(sms);
+        ((TextView) tr.findViewById(R.id.text_message)).setText("АКБ: " + pow + " T°: " + temper);
         tableLayout.addView(tr);
     }
 }
