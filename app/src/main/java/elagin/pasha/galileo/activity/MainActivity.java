@@ -4,6 +4,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -26,6 +28,7 @@ import java.util.Map;
 
 import elagin.pasha.galileo.AnswerMessage;
 import elagin.pasha.galileo.MyApp;
+import elagin.pasha.galileo.MyLocationManager;
 import elagin.pasha.galileo.R;
 import elagin.pasha.galileo.seven_gis.Commands;
 import elagin.pasha.galileo.seven_gis.Insys;
@@ -144,6 +147,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     protected void onResume() {
         super.onResume();
 
+        MyLocationManager.wakeup();
+
         Bundle bindle = getIntent().getExtras();
         if (bindle != null) {
             String smsBoby = bindle.getString("sms");
@@ -152,9 +157,15 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 if (smsBoby.contains("Dev")) {
                     Status status = new Status();
                     if (status.parceStatus(body)) {
-                        answerBody.setText(getAddres(status.getLat(), status.getLon()));
+                        Location userLocation = MyLocationManager.getLocation();
+                        Location blockLocation = new Location(LocationManager.GPS_PROVIDER);
+                        blockLocation.setLatitude(status.getLat());
+                        blockLocation.setLongitude(status.getLon());
+                        float distance = userLocation.distanceTo(blockLocation);
+                        answerBody.setText("Расстояние: " + distance + ". Адрес: " + getAddres(status.getLat(), status.getLon()));
                         dateView.setText(status.getTime());
                         myApp.Messages().add(new AnswerMessage(smsBoby));
+
                         update();
                     }
                 } else if (smsBoby.contains("INSYS")) {
@@ -261,6 +272,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         } catch (SQLiteException ex) {
             Log.d("SQLiteException", ex.getMessage());
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MyLocationManager.sleep();
     }
 }
 
