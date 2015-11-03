@@ -216,6 +216,11 @@ public class MyLocationManager {
 //    }
 
     public String getAddres(Double lat, Double lon) {
+
+        if (!MyUtils.isOnline()) {
+            return lat + " " + lon + " (Нет доступа к интернет)";
+        }
+
         if (geocoder == null) {
             geocoder = new Geocoder(MyApp.getAppContext());
         }

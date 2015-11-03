@@ -1,5 +1,9 @@
 package elagin.pasha.galileo;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -18,5 +22,11 @@ public class MyUtils {
             out = timeFormat.format(date);
         }
         return out;
+    }
+
+    public static boolean isOnline() {
+        ConnectivityManager cm = (ConnectivityManager) MyApp.getAppContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 }

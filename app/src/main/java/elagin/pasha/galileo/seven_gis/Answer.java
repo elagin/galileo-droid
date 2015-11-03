@@ -17,7 +17,6 @@ public class Answer {
     final String INSYS = "INSYS:";
     final String DEV = "DEV";
 
-
     private Types type;
     protected Context context;
     protected Date date;

@@ -54,7 +54,7 @@ public class Insys extends Answer {
     public void inflateRow(final Context context, ViewGroup tableLayout) {
         LayoutInflater li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         TableRow tr = (TableRow) li.inflate(R.layout.answer_message_row, tableLayout, false);
-        ((TextView) tr.findViewById(R.id.date_message)).setText(MyUtils.getStringTime(date, false));
+        ((TextView) tr.findViewById(R.id.date_message)).setText(MyUtils.getStringTime(date, true));
         ((TextView) tr.findViewById(R.id.text_message)).setText("АКБ: " + pow + " T°: " + temper);
         tableLayout.addView(tr);
     }
