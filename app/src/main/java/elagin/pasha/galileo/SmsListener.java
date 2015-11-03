@@ -16,22 +16,22 @@ public class SmsListener extends BroadcastReceiver {
         MyApp myApp = (MyApp) context.getApplicationContext();
         if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")) {
             Bundle bundle = intent.getExtras();
-            SmsMessage[] msgs = null;
-            String msg_from;
             if (bundle != null) {
                 try {
                     Object[] pdus = (Object[]) bundle.get("pdus");
-                    msgs = new SmsMessage[pdus.length];
-                    for (int i = 0; i < msgs.length; i++) {
-                        msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
-                        msg_from = msgs[i].getOriginatingAddress();
-                        if (msg_from.equals(myApp.preferences().getPrefBlockPhone())) {
-                            String msgBody = msgs[i].getMessageBody();
-                            Intent mainIntent = new Intent();
-                            mainIntent.setClassName(context.getPackageName(), MainActivity.class.getName());
-                            mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            mainIntent.putExtra("sms", msgBody);
-                            context.startActivity(mainIntent);
+                    if (pdus != null) {
+                        SmsMessage[] msgs = new SmsMessage[pdus.length];
+                        for (int i = 0; i < msgs.length; i++) {
+                            msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
+                            String msg_from = msgs[i].getOriginatingAddress();
+                            if (msg_from.equals(myApp.preferences().getPrefBlockPhone())) {
+                                String msgBody = msgs[i].getMessageBody();
+                                Intent mainIntent = new Intent();
+                                mainIntent.setClassName(context.getPackageName(), MainActivity.class.getName());
+                                mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                mainIntent.putExtra("sms", msgBody);
+                                context.startActivity(mainIntent);
+                            }
                         }
                     }
                 } catch (Exception e) {
