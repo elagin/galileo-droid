@@ -11,11 +11,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +36,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     private TextView answerBody;
     private TextView dateView;
-    private EditText blockPhone;
+    private Spinner phoneSpiner;
+    private ImageButton phoneAddButton;
+    private ImageButton phoneDelButton;
 
     private MyApp myApp = null;
 
@@ -56,8 +61,18 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         answerBody = (TextView) findViewById(R.id.answerBody);
         dateView = (TextView) findViewById(R.id.date);
 
-        blockPhone = (EditText) findViewById(R.id.blockPhone);
-        blockPhone.setText(myApp.preferences().getPrefBlockPhone());
+        phoneSpiner = (Spinner) findViewById(R.id.phoneSpinner);
+
+        List<String> phoneList = new ArrayList<String>();
+        phoneList.add(myApp.preferences().getPrefBlockPhone());
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, phoneList);
+        phoneSpiner.setAdapter(dataAdapter);
+
+        phoneAddButton = (ImageButton) findViewById(R.id.phoneAddButton);
+        phoneAddButton.setOnClickListener(this);
+
+        phoneDelButton = (ImageButton) findViewById(R.id.phoneDelButton);
+        phoneDelButton.setOnClickListener(this);
 
         readSms();
     }
@@ -122,7 +137,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         switch (id) {
             case R.id.getStatusBtn:
-                myApp.preferences().setPrefBlockPhone(blockPhone.getText().toString());
+                //phoneSpiner.getSelectedItemPosition()
                 sendSMS(Commands.status());
                 break;
             case R.id.resetBtn:
@@ -131,6 +146,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             case R.id.insysBtn:
                 sendSMS(Commands.insys());
                 break;
+
+            case R.id.phoneAddButton:
+                break;
+
+            case R.id.phoneDelButton:
+                break;
+
             default:
                 Log.e("Startup", "Unknown button pressed");
                 break;

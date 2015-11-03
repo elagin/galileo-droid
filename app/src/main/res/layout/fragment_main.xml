@@ -10,10 +10,31 @@
               android:weightSum="1"
               tools:context=".MainActivityFragment">
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/blockPhone" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <Spinner
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/phoneSpinner" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_input_add"
+            android:id="@+id/phoneAddButton"
+            android:layout_gravity="right" />
+
+        <ImageButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_delete"
+            android:id="@+id/phoneDelButton"
+            android:layout_gravity="right" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
