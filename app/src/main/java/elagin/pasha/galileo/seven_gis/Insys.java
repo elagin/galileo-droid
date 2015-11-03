@@ -3,13 +3,16 @@ package elagin.pasha.galileo.seven_gis;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Date;
 import java.util.Map;
 
+import elagin.pasha.galileo.MyApp;
 import elagin.pasha.galileo.MyUtils;
 import elagin.pasha.galileo.R;
 
@@ -35,20 +38,13 @@ public class Insys extends Answer {
             pow = Double.valueOf(data.get("Pow")) / 1000;
             vbat = Double.valueOf(data.get("Vbat")) / 1000;
             temper = Double.valueOf(data.get("Temper"));
+            vant = Double.valueOf(data.get("Vant")) / 1000;
+            vdc = Double.valueOf(data.get("Vdc")) / 1000;
             return true;
         } catch (Exception e) {
             Log.e("Main", e.getLocalizedMessage());
         }
         return false;
-    }
-
-    @Override
-    public String toString() {
-        return "Insys{" +
-                "pow=" + pow +
-                ", vbat=" + vbat +
-                ", temper=" + temper +
-                '}';
     }
 
     public void inflateRow(final Context context, ViewGroup tableLayout) {
@@ -57,5 +53,20 @@ public class Insys extends Answer {
         ((TextView) tr.findViewById(R.id.date_message)).setText(MyUtils.getStringTime(date, true));
         ((TextView) tr.findViewById(R.id.text_message)).setText("АКБ: " + pow + " T°: " + temper);
         tableLayout.addView(tr);
+        tr.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Toast.makeText(MyApp.getAppContext(), getDetail(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public String getDetail() {
+        return "Insys{" +
+                "pow=" + pow +
+                ", vbat=" + vbat +
+                ", vant=" + vant +
+                ", vdc=" + vdc +
+                ", T°=" + temper +
+                '}';
     }
 }

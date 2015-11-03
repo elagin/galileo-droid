@@ -5,9 +5,11 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Date;
 import java.util.Map;
@@ -23,6 +25,7 @@ public class Status extends Answer {
     private Double lon;
     private String sendTime;
     private Integer dist;
+    private String address;
     MyApp myApp;
 
     public Status(Context context, Date date, String sms) {
@@ -70,7 +73,23 @@ public class Status extends Answer {
 
         TableRow tr = (TableRow) li.inflate(R.layout.answer_message_row, tableLayout, false);
         ((TextView) tr.findViewById(R.id.date_message)).setText(MyUtils.getStringTime(date, true));
-        ((TextView) tr.findViewById(R.id.text_message)).setText(getAddres());
+        address = getAddres();
+        ((TextView) tr.findViewById(R.id.text_message)).setText(address);
         tableLayout.addView(tr);
+        tr.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Toast.makeText(MyApp.getAppContext(), getDetail(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public String getDetail() {
+        return "Status{" +
+                ", lat=" + lat +
+                ", lon=" + lon +
+                ", sendTime='" + sendTime + '\'' +
+                ", dist=" + dist +
+                ", address='" + address + '\'' +
+                '}';
     }
 }

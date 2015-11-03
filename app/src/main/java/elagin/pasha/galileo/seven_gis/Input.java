@@ -2,13 +2,16 @@ package elagin.pasha.galileo.seven_gis;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Date;
 import java.util.Map;
 
+import elagin.pasha.galileo.MyApp;
 import elagin.pasha.galileo.MyUtils;
 import elagin.pasha.galileo.R;
 
@@ -36,5 +39,10 @@ public class Input extends Answer {
         ((TextView) tr.findViewById(R.id.date_message)).setText(MyUtils.getStringTime(date, true));
         ((TextView) tr.findViewById(R.id.text_message)).setText(info);
         tableLayout.addView(tr);
+        tr.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Toast.makeText(MyApp.getAppContext(), info, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

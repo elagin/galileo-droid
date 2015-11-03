@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +40,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private Spinner phoneSpiner;
     private ImageButton phoneAddButton;
     private ImageButton phoneDelButton;
+    private TableLayout messagesTable;
 
     private MyApp myApp = null;
 
@@ -73,6 +75,19 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         phoneDelButton = (ImageButton) findViewById(R.id.phoneDelButton);
         phoneDelButton.setOnClickListener(this);
+
+        messagesTable = (TableLayout) findViewById(R.id.messages_table);
+
+//        TableLayout contact_table = (TableLayout)findViewById(R.id.contact_table);
+//        final View row=messagesTable.getChildAt(i);
+//        row.setOnClickListener(new View.OnClickListener(){
+//
+//            @Override
+//            public void onClick(View v){
+//                // TODO Auto-generated method stub
+//                int row_id = messagesTable.indexOfChild(row);
+//            }
+//        });
 
         readSms();
     }
