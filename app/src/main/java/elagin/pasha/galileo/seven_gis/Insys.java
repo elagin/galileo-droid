@@ -24,8 +24,8 @@ public class Insys extends Answer {
     private Double vdc;
     private Double temper;
 
-    public Insys(Context contex, Date date, String sms) {
-        super(contex, date);
+    public Insys(Context context, Date date, String sms) {
+        super(context, date);
         Map<String, String> map = super.getMap(sms);
         parce(map);
     }

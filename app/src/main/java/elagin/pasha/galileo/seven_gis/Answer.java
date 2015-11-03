@@ -12,10 +12,11 @@ import java.util.Map;
  */
 public class Answer {
 
-    public enum Types {insys, status}
+    public enum Types {insys, status, input}
 
     final String INSYS = "INSYS:";
     final String DEV = "DEV";
+    final String INPUT = "Input";
 
     private Types type;
     protected Context context;
@@ -47,6 +48,12 @@ public class Answer {
             type = Types.insys;
         } else if (sms.contains(DEV)) {
             type = Types.status;
+        } else if (sms.contains(INPUT)) {
+            type = Types.input;
+            coma = "-";
+            String[] pairs = sms.split(coma);
+            myMap.put(pairs[0], pairs[1]);
+            return myMap;
         }
 
         String[] pairs = sms.split(coma);

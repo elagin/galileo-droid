@@ -25,6 +25,7 @@ import elagin.pasha.galileo.MyApp;
 import elagin.pasha.galileo.R;
 import elagin.pasha.galileo.seven_gis.Answer;
 import elagin.pasha.galileo.seven_gis.Commands;
+import elagin.pasha.galileo.seven_gis.Input;
 import elagin.pasha.galileo.seven_gis.Insys;
 import elagin.pasha.galileo.seven_gis.Status;
 
@@ -142,7 +143,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             answer = new Status(this, date, smsBoby);
         } else if (smsBoby.contains("INSYS")) {
             answer = new Insys(this, date, smsBoby);
-        }
+        } else if (smsBoby.contains("Input"))
+            answer = new Input(this, date, smsBoby);
         if (answer != null) {
             myApp.getAnswers().add(answer);
         }
@@ -193,15 +195,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     long longDate = cur.getLong(index_Date);
                     int int_Type = cur.getInt(index_Type);
                     Long now = System.currentTimeMillis();
-                    if (((now - 86400000) < longDate)) { // one day old
+                    if (((now - 86400000 * 10) < longDate)) { // 10 day old
                         parceSms(new Date(longDate), strbody);
                     }
                 } while (cur.moveToNext());
-                update();
                 if (!cur.isClosed()) {
                     cur.close();
-                    cur = null;
                 }
+                update();
             }
         } catch (SQLiteException ex) {
             Log.d("SQLiteException", ex.getMessage());
