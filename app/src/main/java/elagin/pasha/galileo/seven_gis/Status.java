@@ -5,11 +5,9 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Date;
 import java.util.Map;
@@ -20,7 +18,6 @@ import elagin.pasha.galileo.R;
 
 public class Status extends Answer {
 
-    private Location location;
     private Double lat;
     private Double lon;
     private String sendTime;
@@ -47,7 +44,7 @@ public class Status extends Answer {
 
                 myApp = (MyApp) context.getApplicationContext();
                 Location userLocation = myApp.getLocationManager().getLocation();
-                location = new Location(LocationManager.GPS_PROVIDER);
+                Location location = new Location(LocationManager.GPS_PROVIDER);
                 location.setLatitude(lat);
                 location.setLongitude(lon);
                 dist = Math.round(location.distanceTo(userLocation));
@@ -76,11 +73,11 @@ public class Status extends Answer {
         address = getAddres();
         ((TextView) tr.findViewById(R.id.text_message)).setText(address);
         tableLayout.addView(tr);
-        tr.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Toast.makeText(MyApp.getAppContext(), getDetail(), Toast.LENGTH_LONG).show();
-            }
-        });
+//        tr.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                Toast.makeText(MyApp.getAppContext(), getDetail(), Toast.LENGTH_LONG).show();
+//            }
+//        });
     }
 
     public String getDetail() {

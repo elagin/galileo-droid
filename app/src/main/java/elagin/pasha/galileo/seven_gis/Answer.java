@@ -19,8 +19,8 @@ public class Answer {
     final String INPUT = "Input";
 
     private Types type;
-    protected Context context;
-    protected Date date;
+    protected final Context context;
+    protected final Date date;
 
     public String getSms() {
         return sms;
@@ -57,8 +57,7 @@ public class Answer {
         }
 
         String[] pairs = sms.split(coma);
-        for (int i = 0; i < pairs.length; i++) {
-            String pair = pairs[i];
+        for (String pair : pairs) {
             String[] keyValue = pair.split("=");
             if (keyValue.length > 1)
                 myMap.put(keyValue[0], keyValue[1]);
@@ -72,5 +71,9 @@ public class Answer {
     }
 
     public void inflateRow(final Context context, ViewGroup tableLayout) {
+    }
+
+    public String getDetail() {
+        return "Not implemented";
     }
 }

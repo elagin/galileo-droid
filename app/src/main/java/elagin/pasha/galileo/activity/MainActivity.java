@@ -21,9 +21,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import elagin.pasha.galileo.MyApp;
 import elagin.pasha.galileo.R;
@@ -38,8 +36,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private TextView answerBody;
     private TextView dateView;
     private Spinner phoneSpiner;
-    private ImageButton phoneAddButton;
-    private ImageButton phoneDelButton;
     private TableLayout messagesTable;
 
     private MyApp myApp = null;
@@ -65,53 +61,20 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         phoneSpiner = (Spinner) findViewById(R.id.phoneSpinner);
 
-        List<String> phoneList = new ArrayList<String>();
+        List<String> phoneList = new ArrayList<>();
         phoneList.add(myApp.preferences().getPrefBlockPhone());
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, phoneList);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, phoneList);
         phoneSpiner.setAdapter(dataAdapter);
 
-        phoneAddButton = (ImageButton) findViewById(R.id.phoneAddButton);
+        ImageButton phoneAddButton = (ImageButton) findViewById(R.id.phoneAddButton);
         phoneAddButton.setOnClickListener(this);
 
-        phoneDelButton = (ImageButton) findViewById(R.id.phoneDelButton);
+        ImageButton phoneDelButton = (ImageButton) findViewById(R.id.phoneDelButton);
         phoneDelButton.setOnClickListener(this);
 
         messagesTable = (TableLayout) findViewById(R.id.messages_table);
-
-//        TableLayout contact_table = (TableLayout)findViewById(R.id.contact_table);
-//        final View row=messagesTable.getChildAt(i);
-//        row.setOnClickListener(new View.OnClickListener(){
-//
-//            @Override
-//            public void onClick(View v){
-//                // TODO Auto-generated method stub
-//                int row_id = messagesTable.indexOfChild(row);
-//            }
-//        });
-
         readSms();
     }
-
-    private Map<String, String> getMap(String s) {
-        Map<String, String> myMap = new HashMap<>();
-        String coma = " ";
-        final String insys = "INSYS:";
-
-        if (s.contains(insys)) {
-            s = s.replace(insys, "").replace(";", "");
-            coma = ",";
-        }
-
-        String[] pairs = s.split(coma);
-        for (int i = 0; i < pairs.length; i++) {
-            String pair = pairs[i];
-            String[] keyValue = pair.split("=");
-            if (keyValue.length > 1)
-                myMap.put(keyValue[0], keyValue[1]);
-        }
-        return myMap;
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -141,7 +104,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             smsManager.sendTextMessage(myApp.preferences().getPrefBlockPhone(), null, msg, null, null);
             Toast.makeText(getApplicationContext(), "Message Sent", Toast.LENGTH_LONG).show();
         } catch (Exception ex) {
-            Toast.makeText(getApplicationContext(), ex.getMessage().toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
             ex.printStackTrace();
         }
     }
@@ -208,6 +171,18 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             for (Fragment fragment : allFragments) {
                 MainActivityFragment f1 = (MainActivityFragment) fragment;
                 f1.update();
+            }
+            for (int i = 0; i < messagesTable.getChildCount(); i++) {
+                final View row = messagesTable.getChildAt(i);
+                row.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int row_id = messagesTable.indexOfChild(row);
+                        Answer answer = myApp.getAnswers().get(row_id);
+                        String detail = answer.getDetail();
+                        answerBody.setText(detail);
+                    }
+                });
             }
         }
     }

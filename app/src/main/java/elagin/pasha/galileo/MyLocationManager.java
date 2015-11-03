@@ -256,7 +256,7 @@ public class MyLocationManager {
 
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(MyApp.getAppContext(), e.getMessage().toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(MyApp.getAppContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
         return res.toString();
     }
