@@ -3,17 +3,14 @@ package elagin.pasha.galileo;
 import android.app.Application;
 import android.content.Context;
 
-import java.util.List;
-
 import elagin.pasha.galileo.database.SmsHistory;
-import elagin.pasha.galileo.seven_gis.Answer;
 
 public class MyApp extends Application {
 
     private MyPreferences prefs = null;
     private MyLocationManager locationManager = null;
     private static MyApp instance;
-    private List<Answer> answers;
+    private SmsHistory smsHistory;
 
     public MyApp() {
         instance = this;
@@ -35,12 +32,11 @@ public class MyApp extends Application {
         return locationManager;
     }
 
-    public List<Answer> getAnswers() {
-        if (answers == null) {
-            //SmsHistory.clear();
-            answers = SmsHistory.getSmsList();
+    public SmsHistory getSmsHistory() {
+        if (smsHistory == null) {
+            smsHistory = new SmsHistory(this);
+            smsHistory.loadSmsFromDB();
         }
-        //answers = new ArrayList<>();
-        return answers;
+        return smsHistory;
     }
 }

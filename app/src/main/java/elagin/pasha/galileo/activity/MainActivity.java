@@ -1,8 +1,5 @@
 package elagin.pasha.galileo.activity;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteException;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -20,18 +17,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import elagin.pasha.galileo.MyApp;
 import elagin.pasha.galileo.R;
-import elagin.pasha.galileo.database.SmsHistory;
 import elagin.pasha.galileo.seven_gis.Answer;
 import elagin.pasha.galileo.seven_gis.Commands;
-import elagin.pasha.galileo.seven_gis.Input;
-import elagin.pasha.galileo.seven_gis.Insys;
-import elagin.pasha.galileo.seven_gis.Status;
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
 
@@ -138,24 +130,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
     }
 
-    protected void parseSms(Date date, String boby) {
-        Answer answer = null;
-        if (boby.contains("Dev")) {
-            answer = new Status(date, boby);
-        } else if (boby.contains("INSYS")) {
-            answer = new Insys(date, boby);
-        } else if (boby.contains("Input"))
-            answer = new Input(date, boby);
-
-        if (answer != null) {
-            long id = SmsHistory.addSms(date, boby);
-            if (id != -1) {
-                answer.setId(id);
-                myApp.getAnswers().add(answer);
-            }
-        }
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -164,7 +138,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         if (bindle != null) {
             String smsBoby = bindle.getString("sms");
             if (smsBoby != null) {
-                parseSms(new Date(), smsBoby);
+                myApp.getSmsHistory().parseSms(null, new Date(), smsBoby);
             }
         }
     }
@@ -182,7 +156,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     @Override
                     public void onClick(View v) {
                         int row_id = messagesTable.indexOfChild(row);
-                        Answer answer = myApp.getAnswers().get(row_id);
+                        Answer answer = myApp.getSmsHistory().get(row_id);
                         String detail = answer.getDetail();
                         answerBody.setText(detail);
                     }
@@ -191,43 +165,43 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
     }
 
-    private void readSms() {
-        final String SMS_URI_INBOX = "content://sms/inbox";
-        final String[] projection = new String[]{"body", "date"};
-
-        Long lastReadTime = myApp.preferences().getLastSmsReadDate();
-        String filter = "";
-        if (lastReadTime == 0) {
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.DATE, -2);
-            Date yesterday = cal.getTime();
-            filter = " and date>" + yesterday.getTime();
-        } else {
-            filter = " and date>" + new Date(lastReadTime).getTime();
-        }
-
-        try {
-            Uri uri = Uri.parse(SMS_URI_INBOX);
-            Cursor cur = getContentResolver().query(uri, projection, "address='" + myApp.preferences().getPrefBlockPhone() + "'" + filter, null, "date desc");
-            if (cur != null && cur.moveToFirst()) {
-                final int index_Body = cur.getColumnIndex("body");
-                final int index_Date = cur.getColumnIndex("date");
-                do {
-                    long smsTime = cur.getLong(index_Date);
-                    lastReadTime = smsTime;
-                    String smsBody = cur.getString(index_Body);
-                    parseSms(new Date(smsTime), smsBody);
-                } while (cur.moveToNext());
-                myApp.preferences().setLastSmsReadDate(lastReadTime);
-                if (!cur.isClosed()) {
-                    cur.close();
-                }
-                update();
-            }
-        } catch (SQLiteException ex) {
-            Log.d("SQLiteException", ex.getMessage());
-        }
-    }
+//    private void readSms() {
+//        final String SMS_URI_INBOX = "content://sms/inbox";
+//        final String[] projection = new String[]{"body", "date"};
+//
+//        Long lastReadTime = myApp.preferences().getLastSmsReadDate();
+//        String filter = "";
+//        if (lastReadTime == 0) {
+//            Calendar cal = Calendar.getInstance();
+//            cal.add(Calendar.DATE, -2);
+//            Date yesterday = cal.getTime();
+//            filter = " and date>" + yesterday.getTime();
+//        } else {
+//            filter = " and date>" + new Date(lastReadTime).getTime();
+//        }
+//
+//        try {
+//            Uri uri = Uri.parse(SMS_URI_INBOX);
+//            Cursor cur = getContentResolver().query(uri, projection, "address='" + myApp.preferences().getPrefBlockPhone() + "'" + filter, null, "date desc");
+//            if (cur != null && cur.moveToFirst()) {
+//                final int index_Body = cur.getColumnIndex("body");
+//                final int index_Date = cur.getColumnIndex("date");
+//                do {
+//                    long smsTime = cur.getLong(index_Date);
+//                    lastReadTime = smsTime;
+//                    String smsBody = cur.getString(index_Body);
+//                    parseSms(new Date(smsTime), smsBody);
+//                } while (cur.moveToNext());
+//                myApp.preferences().setLastSmsReadDate(lastReadTime);
+//                if (!cur.isClosed()) {
+//                    cur.close();
+//                }
+//                update();
+//            }
+//        } catch (SQLiteException ex) {
+//            Log.d("SQLiteException", ex.getMessage());
+//        }
+//    }
 
     @Override
     protected void onPause() {

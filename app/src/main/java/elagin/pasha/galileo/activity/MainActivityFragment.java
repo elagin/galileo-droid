@@ -19,9 +19,7 @@ public class MainActivityFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View viewMain = inflater.inflate(R.layout.fragment_main, container, false);
         messagesTable = viewMain.findViewById(R.id.messages_table);
         myApp = (MyApp) getActivity().getApplicationContext();
@@ -32,8 +30,8 @@ public class MainActivityFragment extends Fragment {
     public void update() {
         ViewGroup messageView = (ViewGroup) messagesTable;
         messageView.removeAllViews();
-        for (int i = 0; i < myApp.getAnswers().size(); i++) {
-            Answer answer = myApp.getAnswers().get(i);
+        for (int i = 0; i < myApp.getSmsHistory().size(); i++) {
+            Answer answer = myApp.getSmsHistory().get(i);
             answer.inflateRow(getActivity(), messageView);
 //            myApp.getAnswers().get(i).inflateRow(getActivity(), messageView);
         }
