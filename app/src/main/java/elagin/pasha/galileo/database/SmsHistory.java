@@ -118,7 +118,8 @@ public class SmsHistory {
                 final int index_Date = cur.getColumnIndex("date");
                 do {
                     long smsTime = cur.getLong(index_Date);
-                    lastReadTime = smsTime;
+                    if (lastReadTime < smsTime)
+                        lastReadTime = smsTime;
                     String smsBody = cur.getString(index_Body);
                     parseSms(null, new Date(smsTime), smsBody);
                 } while (cur.moveToNext());
