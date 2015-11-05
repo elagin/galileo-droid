@@ -13,7 +13,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -225,7 +224,7 @@ public class MyLocationManager {
             geocoder = new Geocoder(MyApp.getAppContext());
         }
         StringBuilder res = new StringBuilder();
-        List<Address> list = new ArrayList<>();
+        List<Address> list;
         try {
             list = geocoder.getFromLocation(lat, lon, 1);
             Address addr = list.get(0);

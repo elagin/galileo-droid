@@ -33,7 +33,6 @@ public class MainActivityFragment extends Fragment {
         ViewGroup messageView = (ViewGroup) messagesTable;
         messageView.removeAllViews();
         for (int i = 0; i < myApp.getAnswers().size(); i++) {
-
             Answer answer = myApp.getAnswers().get(i);
             answer.inflateRow(getActivity(), messageView);
 //            myApp.getAnswers().get(i).inflateRow(getActivity(), messageView);

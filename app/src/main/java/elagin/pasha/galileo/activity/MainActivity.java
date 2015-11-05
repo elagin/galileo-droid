@@ -20,11 +20,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import elagin.pasha.galileo.MyApp;
 import elagin.pasha.galileo.R;
+import elagin.pasha.galileo.database.SmsHistory;
 import elagin.pasha.galileo.seven_gis.Answer;
 import elagin.pasha.galileo.seven_gis.Commands;
 import elagin.pasha.galileo.seven_gis.Input;
@@ -73,7 +75,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         phoneDelButton.setOnClickListener(this);
 
         messagesTable = (TableLayout) findViewById(R.id.messages_table);
-        readSms();
     }
 
     @Override
@@ -137,30 +138,33 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
     }
 
-    protected void parceSms(Date date, String smsBoby) {
+    protected void parseSms(Date date, String boby) {
         Answer answer = null;
-        if (smsBoby.contains("Dev")) {
-            answer = new Status(this, date, smsBoby);
-        } else if (smsBoby.contains("INSYS")) {
-            answer = new Insys(this, date, smsBoby);
-        } else if (smsBoby.contains("Input"))
-            answer = new Input(this, date, smsBoby);
+        if (boby.contains("Dev")) {
+            answer = new Status(date, boby);
+        } else if (boby.contains("INSYS")) {
+            answer = new Insys(date, boby);
+        } else if (boby.contains("Input"))
+            answer = new Input(date, boby);
+
         if (answer != null) {
-            myApp.getAnswers().add(answer);
+            long id = SmsHistory.addSms(date, boby);
+            if (id != -1) {
+                answer.setId(id);
+                myApp.getAnswers().add(answer);
+            }
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
         myApp.getLocationManager().wakeup();
-
         Bundle bindle = getIntent().getExtras();
         if (bindle != null) {
             String smsBoby = bindle.getString("sms");
             if (smsBoby != null) {
-                parceSms(new Date(), smsBoby);
+                parseSms(new Date(), smsBoby);
             }
         }
     }
@@ -189,28 +193,32 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     private void readSms() {
         final String SMS_URI_INBOX = "content://sms/inbox";
-        final String SMS_URI_ALL = "content://sms/";
+        final String[] projection = new String[]{"body", "date"};
+
+        Long lastReadTime = myApp.preferences().getLastSmsReadDate();
+        String filter = "";
+        if (lastReadTime == 0) {
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, -2);
+            Date yesterday = cal.getTime();
+            filter = " and date>" + yesterday.getTime();
+        } else {
+            filter = " and date>" + new Date(lastReadTime).getTime();
+        }
+
         try {
             Uri uri = Uri.parse(SMS_URI_INBOX);
-            String[] projection = new String[]{"_id", "address", "person", "body", "date", "type"};
-            Cursor cur = getContentResolver().query(uri, projection, "address='" + myApp.preferences().getPrefBlockPhone() + "'", null, "date desc");
+            Cursor cur = getContentResolver().query(uri, projection, "address='" + myApp.preferences().getPrefBlockPhone() + "'" + filter, null, "date desc");
             if (cur != null && cur.moveToFirst()) {
-                int index_Address = cur.getColumnIndex("address");
-                int index_Person = cur.getColumnIndex("person");
-                int index_Body = cur.getColumnIndex("body");
-                int index_Date = cur.getColumnIndex("date");
-                int index_Type = cur.getColumnIndex("type");
+                final int index_Body = cur.getColumnIndex("body");
+                final int index_Date = cur.getColumnIndex("date");
                 do {
-                    String strAddress = cur.getString(index_Address);
-                    int intPerson = cur.getInt(index_Person);
-                    String strbody = cur.getString(index_Body);
-                    long longDate = cur.getLong(index_Date);
-                    int int_Type = cur.getInt(index_Type);
-                    Long now = System.currentTimeMillis();
-                    if (((now - 86400000 * 10) < longDate)) { // 10 day old
-                        parceSms(new Date(longDate), strbody);
-                    }
+                    long smsTime = cur.getLong(index_Date);
+                    lastReadTime = smsTime;
+                    String smsBody = cur.getString(index_Body);
+                    parseSms(new Date(smsTime), smsBody);
                 } while (cur.moveToNext());
+                myApp.preferences().setLastSmsReadDate(lastReadTime);
                 if (!cur.isClosed()) {
                     cur.close();
                 }

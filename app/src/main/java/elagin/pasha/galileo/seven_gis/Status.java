@@ -25,8 +25,8 @@ public class Status extends Answer {
     private String address;
     MyApp myApp;
 
-    public Status(Context context, Date date, String sms) {
-        super(context, date);
+    public Status(Date date, String sms) {
+        super(date);
         Map<String, String> map = super.getMap(sms);
         parce(map);
     }
@@ -41,23 +41,21 @@ public class Status extends Answer {
                 this.lat = lat;
                 this.lon = lon;
                 this.sendTime = time;
-
-                myApp = (MyApp) context.getApplicationContext();
-                Location userLocation = myApp.getLocationManager().getLocation();
-                Location location = new Location(LocationManager.GPS_PROVIDER);
-                location.setLatitude(lat);
-                location.setLongitude(lon);
-                dist = Math.round(location.distanceTo(userLocation));
                 return true;
             }
-
         } catch (Exception e) {
             Log.e("Main", e.getLocalizedMessage());
         }
         return false;
     }
 
-    public String getAddres() {
+    public String getAddres(Context context) {
+        myApp = (MyApp) context.getApplicationContext();
+        Location userLocation = myApp.getLocationManager().getLocation();
+        Location location = new Location(LocationManager.GPS_PROVIDER);
+        location.setLatitude(lat);
+        location.setLongitude(lon);
+        this.dist = Math.round(location.distanceTo(userLocation));
         return myApp.getLocationManager().getAddres(lat, lon);
     }
 
@@ -65,12 +63,16 @@ public class Status extends Answer {
         return dist;
     }
 
+    public void setAddress(Context context) {
+        address = getAddres(context);
+    }
+
     public void inflateRow(final Context context, ViewGroup tableLayout) {
+        setAddress(context);
         LayoutInflater li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         TableRow tr = (TableRow) li.inflate(R.layout.answer_message_row, tableLayout, false);
         ((TextView) tr.findViewById(R.id.date_message)).setText(MyUtils.getStringTime(date, true));
-        address = getAddres();
         ((TextView) tr.findViewById(R.id.text_message)).setText(address);
         tableLayout.addView(tr);
 //        tr.setOnClickListener(new View.OnClickListener() {

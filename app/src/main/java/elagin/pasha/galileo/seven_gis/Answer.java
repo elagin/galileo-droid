@@ -19,21 +19,25 @@ public class Answer {
     final String INPUT = "Input";
 
     private Types type;
-    protected final Context context;
     protected final Date date;
-
-    public String getSms() {
-        return sms;
-    }
-
+    protected Long id;
     protected String sms;
 
-    public Types getType() {
-        return type;
+    public Answer(Long id, Date date, String body) {
+        this.id = id;
+        this.date = date;
+        this.sms = body;
     }
 
-    public Answer(Context context, Date date) {
-        this.context = context;
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Answer(Date date) {
         this.date = date;
     }
 
@@ -63,11 +67,6 @@ public class Answer {
                 myMap.put(keyValue[0], keyValue[1]);
         }
         return myMap;
-    }
-
-
-    public Boolean parce(Map<String, String> data) {
-        return null;
     }
 
     public void inflateRow(final Context context, ViewGroup tableLayout) {

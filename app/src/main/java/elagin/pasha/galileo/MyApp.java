@@ -3,9 +3,9 @@ package elagin.pasha.galileo;
 import android.app.Application;
 import android.content.Context;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import elagin.pasha.galileo.database.SmsHistory;
 import elagin.pasha.galileo.seven_gis.Answer;
 
 public class MyApp extends Application {
@@ -36,8 +36,11 @@ public class MyApp extends Application {
     }
 
     public List<Answer> getAnswers() {
-        if (answers == null)
-            answers = new ArrayList<>();
+        if (answers == null) {
+            //SmsHistory.clear();
+            answers = SmsHistory.getSmsList();
+        }
+        //answers = new ArrayList<>();
         return answers;
     }
 }

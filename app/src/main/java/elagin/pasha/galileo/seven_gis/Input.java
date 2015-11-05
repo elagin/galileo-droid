@@ -19,8 +19,8 @@ public class Input extends Answer {
 
     private String info;
 
-    public Input(Context context, Date date, String sms) {
-        super(context, date);
+    public Input(Date date, String sms) {
+        super(date);
         Map<String, String> map = super.getMap(sms);
         parce(map);
     }
