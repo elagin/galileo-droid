@@ -45,7 +45,6 @@ public class SmsHistory {
     }
 
     public void loadSmsFromDB() {
-        //List<Answer> res = new ArrayList<>();
         DbOpenHelper dbOpenHelper = new DbOpenHelper();
         SQLiteDatabase db = dbOpenHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT " +
@@ -54,19 +53,18 @@ public class SmsHistory {
                 DbOpenHelper.COLUMN_NAME_TEXT + " " +
                 " FROM " + DbOpenHelper.SMS_HISTORY_TABLE_NAME, null);
         while (cursor.moveToNext()) {
-            //Answer answer = new Answer(cursor.getLong(0), new Date(cursor.getLong(1)), cursor.getString(2));
-            //answers.add(answer);
             parseSms(cursor.getLong(0), new Date(cursor.getLong(1)), cursor.getString(2));
         }
         cursor.close();
         db.close();
-        readSms();
+        readInbox();
     }
 
-    public static void clear() {
+    public void clear() {
         DbOpenHelper dbOpenHelper = new DbOpenHelper();
         SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
         db.delete(DbOpenHelper.SMS_HISTORY_TABLE_NAME, null, null);
+        answers.clear();
     }
 
     public void parseSms(Long id, Date date, String boby) {
@@ -97,15 +95,15 @@ public class SmsHistory {
         return answers.size();
     }
 
-    private void readSms() {
+    private void readInbox() {
         final String SMS_URI_INBOX = "content://sms/inbox";
         final String[] projection = new String[]{"body", "date"};
-
         Long lastReadTime = myApp.preferences().getLastSmsReadDate();
         String filter = "";
+
         if (lastReadTime == 0) {
             Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.DATE, -2);
+            cal.add(Calendar.DATE, -4);
             Date yesterday = cal.getTime();
             filter = " and date>" + yesterday.getTime();
         } else {

@@ -79,10 +79,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.action_settings:
+                return true;
+            case R.id.action_clearHistory:
+                myApp.getSmsHistory().clear();
+                break;
+            case R.id.action_resetLastDate:
+                myApp.preferences().setLastSmsReadDate((long) 0);
+                break;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
