@@ -1,7 +1,6 @@
 package elagin.pasha.galileo.activity;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.telephony.SmsManager;
 import android.util.Log;
@@ -22,13 +21,11 @@ import java.util.List;
 
 import elagin.pasha.galileo.MyApp;
 import elagin.pasha.galileo.R;
-import elagin.pasha.galileo.seven_gis.Answer;
 import elagin.pasha.galileo.seven_gis.Commands;
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
 
     private TextView answerBody;
-    private TextView dateView;
     private Spinner phoneSpiner;
     private TableLayout messagesTable;
 
@@ -51,8 +48,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         insysBtn.setOnClickListener(this);
 
         answerBody = (TextView) findViewById(R.id.answerBody);
-        dateView = (TextView) findViewById(R.id.date);
-
         phoneSpiner = (Spinner) findViewById(R.id.phoneSpinner);
 
         List<String> phoneList = new ArrayList<>();
@@ -142,66 +137,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             }
         }
     }
-
-    private void update() {
-        List<Fragment> allFragments = getSupportFragmentManager().getFragments();
-        if (allFragments != null) {
-            for (Fragment fragment : allFragments) {
-                MainActivityFragment f1 = (MainActivityFragment) fragment;
-                f1.update();
-            }
-            for (int i = 0; i < messagesTable.getChildCount(); i++) {
-                final View row = messagesTable.getChildAt(i);
-                row.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        int row_id = messagesTable.indexOfChild(row);
-                        Answer answer = myApp.getSmsHistory().get(row_id);
-                        String detail = answer.getDetail();
-                        answerBody.setText(detail);
-                    }
-                });
-            }
-        }
-    }
-
-//    private void readSms() {
-//        final String SMS_URI_INBOX = "content://sms/inbox";
-//        final String[] projection = new String[]{"body", "date"};
-//
-//        Long lastReadTime = myApp.preferences().getLastSmsReadDate();
-//        String filter = "";
-//        if (lastReadTime == 0) {
-//            Calendar cal = Calendar.getInstance();
-//            cal.add(Calendar.DATE, -2);
-//            Date yesterday = cal.getTime();
-//            filter = " and date>" + yesterday.getTime();
-//        } else {
-//            filter = " and date>" + new Date(lastReadTime).getTime();
-//        }
-//
-//        try {
-//            Uri uri = Uri.parse(SMS_URI_INBOX);
-//            Cursor cur = getContentResolver().query(uri, projection, "address='" + myApp.preferences().getPrefBlockPhone() + "'" + filter, null, "date desc");
-//            if (cur != null && cur.moveToFirst()) {
-//                final int index_Body = cur.getColumnIndex("body");
-//                final int index_Date = cur.getColumnIndex("date");
-//                do {
-//                    long smsTime = cur.getLong(index_Date);
-//                    lastReadTime = smsTime;
-//                    String smsBody = cur.getString(index_Body);
-//                    parseSms(new Date(smsTime), smsBody);
-//                } while (cur.moveToNext());
-//                myApp.preferences().setLastSmsReadDate(lastReadTime);
-//                if (!cur.isClosed()) {
-//                    cur.close();
-//                }
-//                update();
-//            }
-//        } catch (SQLiteException ex) {
-//            Log.d("SQLiteException", ex.getMessage());
-//        }
-//    }
 
     @Override
     protected void onPause() {
