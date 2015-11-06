@@ -103,7 +103,7 @@ public class SmsHistory {
 
         if (lastReadTime == 0) {
             Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.DATE, -4);
+            cal.add(Calendar.DATE, -10);
             Date yesterday = cal.getTime();
             filter = " and date>" + yesterday.getTime();
         } else {

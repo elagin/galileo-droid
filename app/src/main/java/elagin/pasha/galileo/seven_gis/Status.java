@@ -73,6 +73,7 @@ public class Status extends Answer {
 
         TableRow tr = (TableRow) li.inflate(R.layout.answer_message_row, tableLayout, false);
         ((TextView) tr.findViewById(R.id.date_message)).setText(MyUtils.getStringTime(date, true));
+        ((TextView) tr.findViewById(R.id.time_message)).setText(MyUtils.getStringTime(date, false));
         ((TextView) tr.findViewById(R.id.text_message)).setText(address);
         tableLayout.addView(tr);
 //        tr.setOnClickListener(new View.OnClickListener() {
