@@ -29,7 +29,7 @@ public class Statall extends Answer {
         parce(map);
     }
 
-    public Boolean parce(Map<String, String> data) {
+    private Boolean parce(Map<String, String> data) {
         try {
             dev = Integer.valueOf(data.get("Dev"));
             ins = Integer.valueOf(data.get("Ins"));
@@ -49,5 +49,14 @@ public class Statall extends Answer {
         ((TextView) tr.findViewById(R.id.time_message)).setText(MyUtils.getStringTime(date, false));
         ((TextView) tr.findViewById(R.id.text_message)).setText("Пробег: " + mileage);
         tableLayout.addView(tr);
+    }
+
+    public String getDetail() {
+        return "Statall{" +
+                "dev=" + dev +
+                ", ins=" + ins +
+                ", outs=" + outs +
+                ", mileage=" + mileage +
+                '}';
     }
 }

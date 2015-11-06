@@ -23,7 +23,7 @@ public class Status extends Answer {
     private String sendTime;
     private Integer dist;
     private String address;
-    MyApp myApp;
+    private MyApp myApp;
 
     public Status(Date date, String sms) {
         super(date);
@@ -31,7 +31,7 @@ public class Status extends Answer {
         parce(map);
     }
 
-    public Boolean parce(Map<String, String> data) {
+    private Boolean parce(Map<String, String> data) {
         try {
             Double lat = Double.valueOf(data.get("Lat"));
             Double lon = Double.valueOf(data.get("Lon"));
@@ -49,7 +49,7 @@ public class Status extends Answer {
         return false;
     }
 
-    public String getAddres(Context context) {
+    private String getAddres(Context context) {
         myApp = (MyApp) context.getApplicationContext();
         Location userLocation = myApp.getLocationManager().getLocation();
         Location location = new Location(LocationManager.GPS_PROVIDER);
@@ -63,7 +63,7 @@ public class Status extends Answer {
         return dist;
     }
 
-    public void setAddress(Context context) {
+    private void setAddress(Context context) {
         address = getAddres(context);
     }
 

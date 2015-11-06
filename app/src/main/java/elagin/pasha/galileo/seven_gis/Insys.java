@@ -30,7 +30,7 @@ public class Insys extends Answer {
         parce(map);
     }
 
-    public Boolean parce(Map<String, String> data) {
+    private Boolean parce(Map<String, String> data) {
         try {
             pow = Double.valueOf(data.get("Pow")) / 1000;
             vbat = Double.valueOf(data.get("Vbat")) / 1000;

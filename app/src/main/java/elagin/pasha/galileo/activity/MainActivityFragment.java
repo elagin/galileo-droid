@@ -33,7 +33,7 @@ public class MainActivityFragment extends Fragment {
         return viewMain;
     }
 
-    public void update() {
+    private void update() {
         ViewGroup messageView = (ViewGroup) messagesTable;
         final TableLayout messagesTableLayout = (TableLayout) messagesTable;
 

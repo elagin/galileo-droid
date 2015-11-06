@@ -27,21 +27,21 @@ import elagin.pasha.galileo.seven_gis.Status;
 
 public class SmsHistory {
 
-    Comparator<Answer> cmp = new Comparator<Answer>() {
+    private Comparator<Answer> cmp = new Comparator<Answer>() {
         public int compare(Answer o1, Answer o2) {
             return o1.getDate().getTime() < o2.getDate().getTime() ? 1 : -1;
         }
     };
 
     private List<Answer> answers;
-    MyApp myApp;
+    private MyApp myApp;
 
     public SmsHistory(MyApp myApp) {
         this.myApp = myApp;
         answers = new ArrayList<>();
     }
 
-    public long saveSms(Date date, String text) {
+    private long saveSms(Date date, String text) {
         DbOpenHelper dbOpenHelper = new DbOpenHelper();
         SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -93,7 +93,6 @@ public class SmsHistory {
         }
 
         if (answer != null) {
-            String name = answer.getClass().toString();
             if (id == null) {
                 id = saveSms(date, body);
             }
@@ -118,7 +117,7 @@ public class SmsHistory {
         final String SMS_URI_INBOX = "content://sms/inbox";
         final String[] projection = new String[]{"body", "date"};
         Long lastReadTime = myApp.preferences().getLastSmsReadDate();
-        String filter = "";
+        String filter;
 
         if (lastReadTime == 0) {
             Calendar cal = Calendar.getInstance();

@@ -25,7 +25,7 @@ public class Input extends Answer {
         parce(map);
     }
 
-    public Boolean parce(Map<String, String> data) {
+    private Boolean parce(Map<String, String> data) {
         info = data.toString();
         return true;
     }

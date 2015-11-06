@@ -1,7 +1,7 @@
 package elagin.pasha.galileo.activity;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.Menu;
@@ -11,7 +11,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,11 +22,7 @@ import elagin.pasha.galileo.MyApp;
 import elagin.pasha.galileo.R;
 import elagin.pasha.galileo.seven_gis.Commands;
 
-public class MainActivity extends ActionBarActivity implements View.OnClickListener {
-
-    private TextView answerBody;
-    private Spinner phoneSpiner;
-    private TableLayout messagesTable;
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private MyApp myApp = null;
 
@@ -50,8 +45,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         Button statallBtn = (Button) findViewById(R.id.statallBtn);
         statallBtn.setOnClickListener(this);
 
-        answerBody = (TextView) findViewById(R.id.answerBody);
-        phoneSpiner = (Spinner) findViewById(R.id.phoneSpinner);
+        TextView answerBody = (TextView) findViewById(R.id.answerBody);
+        Spinner phoneSpiner = (Spinner) findViewById(R.id.phoneSpinner);
 
         List<String> phoneList = new ArrayList<>();
         phoneList.add(myApp.preferences().getPrefBlockPhone());
@@ -63,8 +58,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         ImageButton phoneDelButton = (ImageButton) findViewById(R.id.phoneDelButton);
         phoneDelButton.setOnClickListener(this);
-
-        messagesTable = (TableLayout) findViewById(R.id.messages_table);
     }
 
     @Override
@@ -95,7 +88,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         return super.onOptionsItemSelected(item);
     }
 
-    public void sendSMS(String msg) {
+    private void sendSMS(String msg) {
         try {
             SmsManager smsManager = SmsManager.getDefault();
             smsManager.sendTextMessage(myApp.preferences().getPrefBlockPhone(), null, msg, null, null);

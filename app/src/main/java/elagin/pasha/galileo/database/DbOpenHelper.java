@@ -8,7 +8,7 @@ import elagin.pasha.galileo.MyApp;
 /**
  * Created by elagin on 05.11.15.
  */
-public class DbOpenHelper extends SQLiteOpenHelper {
+class DbOpenHelper extends SQLiteOpenHelper {
 
     public static final String SMS_HISTORY_TABLE_NAME = "smsHistory";
     public static final String COLUMN_NAME_ID = "entryid";

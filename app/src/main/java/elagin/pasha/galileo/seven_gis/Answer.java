@@ -20,16 +20,16 @@ public class Answer {
 
     public enum Types {insys, status, input, statall}
 
-    final String INSYS = "INSYS:";
-    final String DEV = "DEV";
-    final String INPUT = "Input";
-    final String STAT_ALL = "StatAll:";
+    private final String INSYS = "INSYS:";
+    private final String DEV = "DEV";
+    private final String INPUT = "Input";
+    private final String STAT_ALL = "StatAll:";
 
     private Types type;
 
-    protected final Date date;
-    protected Long id;
-    protected String sms;
+    final Date date;
+    private Long id;
+    String sms;
 
     public Answer(Date date, String body) {
         this.date = date;
@@ -44,11 +44,11 @@ public class Answer {
         this.id = id;
     }
 
-    public Answer(Date date) {
+    Answer(Date date) {
         this.date = date;
     }
 
-    protected Map<String, String> getMap(String sms) {
+    Map<String, String> getMap(String sms) {
         this.sms = sms;
         Map<String, String> myMap = new HashMap<>();
         String coma = " ";
