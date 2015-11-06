@@ -147,6 +147,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             String smsBoby = bindle.getString("sms");
             if (smsBoby != null) {
                 myApp.getSmsHistory().parseSms(null, new Date(), smsBoby);
+                myApp.getSmsHistory().sort();
             }
         }
     }

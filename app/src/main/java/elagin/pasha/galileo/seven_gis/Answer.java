@@ -26,6 +26,7 @@ public class Answer {
     final String STAT_ALL = "StatAll:";
 
     private Types type;
+
     protected final Date date;
     protected Long id;
     protected String sms;
@@ -90,5 +91,9 @@ public class Answer {
 
     public String getDetail() {
         return "Not implemented";
+    }
+
+    public Date getDate() {
+        return date;
     }
 }

@@ -9,6 +9,8 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -22,7 +24,14 @@ import elagin.pasha.galileo.seven_gis.Status;
 /**
  * Created by elagin on 05.11.15.
  */
+
 public class SmsHistory {
+
+    Comparator<Answer> cmp = new Comparator<Answer>() {
+        public int compare(Answer o1, Answer o2) {
+            return o1.getDate().getTime() < o2.getDate().getTime() ? 1 : -1;
+        }
+    };
 
     private List<Answer> answers;
     MyApp myApp;
@@ -59,6 +68,7 @@ public class SmsHistory {
         cursor.close();
         db.close();
         readInbox();
+        sort();
     }
 
     public void clear() {
@@ -142,4 +152,7 @@ public class SmsHistory {
         }
     }
 
+    public void sort() {
+        Collections.sort(answers, cmp);
+    }
 }
