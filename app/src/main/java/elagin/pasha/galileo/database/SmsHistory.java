@@ -16,6 +16,7 @@ import elagin.pasha.galileo.MyApp;
 import elagin.pasha.galileo.seven_gis.Answer;
 import elagin.pasha.galileo.seven_gis.Input;
 import elagin.pasha.galileo.seven_gis.Insys;
+import elagin.pasha.galileo.seven_gis.Statall;
 import elagin.pasha.galileo.seven_gis.Status;
 
 /**
@@ -67,23 +68,31 @@ public class SmsHistory {
         answers.clear();
     }
 
-    public void parseSms(Long id, Date date, String boby) {
+    public void parseSms(Long id, Date date, String body) {
         Answer answer = null;
-        if (boby.contains("Dev")) {
-            answer = new Status(date, boby);
-        } else if (boby.contains("INSYS")) {
-            answer = new Insys(date, boby);
-        } else if (boby.contains("Input"))
-            answer = new Input(date, boby);
-        String name = answer.getClass().toString();
+        if (body.contains("StatAll")) {
+            answer = new Statall(date, body);
+        } else if (body.contains("Dev")) {
+            answer = new Status(date, body);
+        } else if (body.contains("INSYS")) {
+            answer = new Insys(date, body);
+        } else if (body.contains("Input")) {
+            answer = new Input(date, body);
+        } else if (body.contains("Reset")) {
+            answer = new Answer(date, body);
+        }
+
         if (answer != null) {
+            String name = answer.getClass().toString();
             if (id == null) {
-                id = saveSms(date, boby);
+                id = saveSms(date, body);
             }
             if (id != -1) {
                 answer.setId(id);
                 answers.add(answer);
             }
+        } else {
+            Log.d("1", "new answer");
         }
     }
 

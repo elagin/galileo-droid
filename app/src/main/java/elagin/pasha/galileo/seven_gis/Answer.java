@@ -1,30 +1,36 @@
 package elagin.pasha.galileo.seven_gis;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import elagin.pasha.galileo.MyUtils;
+import elagin.pasha.galileo.R;
 
 /**
  * Created by elagin on 27.10.15.
  */
 public class Answer {
 
-    public enum Types {insys, status, input}
+    public enum Types {insys, status, input, statall}
 
     final String INSYS = "INSYS:";
     final String DEV = "DEV";
     final String INPUT = "Input";
+    final String STAT_ALL = "StatAll:";
 
     private Types type;
     protected final Date date;
     protected Long id;
     protected String sms;
 
-    public Answer(Long id, Date date, String body) {
-        this.id = id;
+    public Answer(Date date, String body) {
         this.date = date;
         this.sms = body;
     }
@@ -52,6 +58,10 @@ public class Answer {
             type = Types.insys;
         } else if (sms.contains(DEV)) {
             type = Types.status;
+        } else if (sms.contains(STAT_ALL)) {
+            sms = sms.replace(STAT_ALL, "").replace(";", "");
+            coma = ",";
+            type = Types.statall;
         } else if (sms.contains(INPUT)) {
             type = Types.input;
             coma = "-";
@@ -70,6 +80,12 @@ public class Answer {
     }
 
     public void inflateRow(final Context context, ViewGroup tableLayout) {
+        LayoutInflater li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        TableRow tr = (TableRow) li.inflate(R.layout.answer_message_row, tableLayout, false);
+        ((TextView) tr.findViewById(R.id.date_message)).setText(MyUtils.getStringTime(date, true));
+        ((TextView) tr.findViewById(R.id.time_message)).setText(MyUtils.getStringTime(date, false));
+        ((TextView) tr.findViewById(R.id.text_message)).setText(sms);
+        tableLayout.addView(tr);
     }
 
     public String getDetail() {

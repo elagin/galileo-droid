@@ -47,6 +47,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         Button insysBtn = (Button) findViewById(R.id.insysBtn);
         insysBtn.setOnClickListener(this);
 
+        Button statallBtn = (Button) findViewById(R.id.statallBtn);
+        statallBtn.setOnClickListener(this);
+
         answerBody = (TextView) findViewById(R.id.answerBody);
         phoneSpiner = (Spinner) findViewById(R.id.phoneSpinner);
 
@@ -117,6 +120,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 break;
             case R.id.insysBtn:
                 sendSMS(Commands.insys());
+                break;
+
+            case R.id.statallBtn:
+                sendSMS(Commands.statAll());
                 break;
 
             case R.id.phoneAddButton:

@@ -13,4 +13,8 @@ public class Commands {
     public static String insys() {
         return "insys";
     }
+
+    public static String statAll() {
+        return "statall";
+    }
 }
